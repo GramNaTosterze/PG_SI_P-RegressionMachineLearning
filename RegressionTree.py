@@ -90,9 +90,9 @@ class RegressionTree:
         if tree.value is not None:
             print(tree.value)
         else:
-            print("X_"+str(tree.feature), "<=", tree.threshold, "?", tree.var_red)
-            print("%sleft:" % (indent), end="")
+            print(f"X_{str(tree.feature)} <= {tree.threshold} ? {tree.var_red}")
+            print(f"{indent}left:", end='')
             self.print_tree(tree.left, indent + indent)
-            print("%sright:" % (indent), end="")
+            print(f"{indent}right:", end='')
             self.print_tree(tree.right, indent + indent)
     

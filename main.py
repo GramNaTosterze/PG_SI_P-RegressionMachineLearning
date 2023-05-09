@@ -4,6 +4,7 @@ Created on Fri May  5 17:31:43 2023
 
 @author: Krzysiu
 """
+import time
 import Data
 from RegressionTree import RegressionTree
 
@@ -19,5 +20,8 @@ x_test = test_data['Weight'].to_numpy()
 
 # test implementation
 regressor = RegressionTree(min_sample_split=3, max_depth=3)
+
+time_0 = time.time()
 regressor.fit(x_train, y_train)
+print(f"time: {time.time() - time_0}")
 regressor.print_tree()
