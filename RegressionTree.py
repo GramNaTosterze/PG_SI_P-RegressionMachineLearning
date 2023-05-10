@@ -18,28 +18,28 @@ class Node:
         
 class RegressionTree:
     def __init__(self, min_sample_split=2, max_depth=2):
-        self.root               = None
-        self.min_sample_split   = min_sample_split
-        self.max_depth          = max_depth
+        self.__root               = None
+        self.__min_sample_split   = min_sample_split
+        self.__max_depth          = max_depth
     
     def fit(self, X, y):
         try:    # when features >= 2
             X.shape[1]
         except: # when only 1 feature
             X = np.array([X]).T # to not break other things when X is an 1d array
-        self.root = self.split(X, y, 0)
+        self.__root = self.__split(X, y, 0)
     
-    def split(self, X, y, depth):
-        if depth == self.max_depth:
+    def __split(self, X, y, depth):
+        if depth == self.__max_depth:
             return Node(value=np.mean(y)) # wynik
         
-        node        = self.find_best_split(X, y)
+        node        = self.__find_best_split(X, y)
         mask        = X[:, node.feature] < node.threshold
-        node.left   = self.split(X[ mask], y[ mask], depth + 1)
-        node.right  = self.split(X[~mask], y[~mask], depth + 1)
+        node.left   = self.__split(X[ mask], y[ mask], depth + 1)
+        node.right  = self.__split(X[~mask], y[~mask], depth + 1)
         return node
     
-    def find_best_split(self, X, y) -> Node:
+    def __find_best_split(self, X, y) -> Node:
         best_feature, best_threshold = None, None
         best_score = np.inf # the lesser the better
     
@@ -53,7 +53,7 @@ class RegressionTree:
                 mask    = X[:, feature] < threshold
                 y_left  = y[ mask]
                 y_right = y[~mask]
-                t_rss   = self.rss(y_left, y_right)
+                t_rss   = self.__rss(y_left, y_right)
                 
                 if t_rss < best_score:
                     best_score      = t_rss
@@ -63,8 +63,9 @@ class RegressionTree:
         return Node(feature=best_feature, threshold=best_threshold)
     
     def predict(self, sample):
+        """Make prediction based on current tree"""
         prediction = None
-        node = self.root
+        node = self.__root
         while prediction is None:
             feature, threshold = node.feature, node.threshold
             if sample[feature] < threshold:
@@ -74,7 +75,7 @@ class RegressionTree:
             prediction = node.value
         return prediction
     
-    def rss(self, y1, y2):
+    def __rss(self, y1, y2):
         """Residual Sum of Squares - used to measure quality of split"""
         def srs(y):
             """Squared resudual sum"""
@@ -83,9 +84,9 @@ class RegressionTree:
         return srs(y1) + srs(y2)
     
     def print_tree(self, tree=None, indent=" "):
-        """Prints the tree"""
+        """Prints the current tree"""
         if not tree:
-            tree = self.root
+            tree = self.__root
         
         if tree.value is not None:
             print(tree.value)
