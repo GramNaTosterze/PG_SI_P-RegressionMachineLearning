@@ -23,5 +23,7 @@ regressor = RegressionTree(min_sample_split=3, max_depth=3)
 
 time_0 = time.time()
 regressor.fit(x_train, y_train)
-print(f"time: {time.time() - time_0}")
+print(f"time: {time.time() - time_0}\n")
+
+
 regressor.print_tree()
