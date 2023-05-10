@@ -1,3 +1,4 @@
 main.py
 Data.py
 Data/
+__pycache__/
