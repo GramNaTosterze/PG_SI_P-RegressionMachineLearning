@@ -12,10 +12,12 @@ data = Data.get_data()
 train_data, test_data = Data.split_data(data)
 
 y_train = train_data['MPG'].to_numpy()
-x_train = train_data['Weight'].to_numpy()
+x_train = (train_data.drop(['MPG'], axis=1) ).to_numpy()
+
 
 y_test = test_data['MPG'].to_numpy()
-x_test = test_data['Weight'].to_numpy()
+#x_test = test_data['Weight'].to_numpy()
+x_test = (test_data.drop(['MPG'], axis=1) ).to_numpy()
 
 
 # test implementation
