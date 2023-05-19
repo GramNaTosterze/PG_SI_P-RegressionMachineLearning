@@ -27,6 +27,14 @@ y_test = test_data[y_label].to_numpy()
 x_test = test_data.drop(y_label, axis=1).to_numpy()
 
 
+y_train = train_data[y_label].to_numpy()
+x_train = (train_data.drop([y_label], axis=1) ).to_numpy()
+
+
+y_test = test_data[y_label].to_numpy()
+x_test = (test_data.drop([y_label], axis=1) ).to_numpy()
+
+
 # test implementation
 regressor = RegressionTree(min_sample_split=3, max_depth=3)
 
