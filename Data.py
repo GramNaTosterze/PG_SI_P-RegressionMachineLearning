@@ -7,21 +7,15 @@ Created on Fri May  5 17:38:06 2023
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
 
-def get_data():
-    url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data'
-    column_names = ['MPG', 'Cylinders', 'Displacement', 'Horsepower', 'Weight',
-                    'Acceleration', 'Model Year', 'Origin']
-
-    raw_dataset = pd.read_csv(url, names=column_names, na_values='?', comment='\t',
-                              sep=' ', skipinitialspace=True)
-
-    # remove entries with missing values
+def get_data(path):
+    
+    raw_dataset = pd.read_csv(path, na_values='?', comment='\t',
+                              sep=',', skipinitialspace=True)
+    
     dataset = raw_dataset.dropna()
-    # from sklearn import preprocessing
-    # normalized_features = preprocessing.StandardScaler().fit_transform(dataset)
-    # dataset = pd.DataFrame(data=normalized_features, columns=column_names)
-    return dataset
+    return dataset.select_dtypes([np.number])
 
 
 def inspect_data(dataset):
@@ -43,3 +37,7 @@ def split_data(dataset):
     test_dataset = dataset.drop(train_dataset.index)
 
     return train_dataset, test_dataset
+
+def save_to_latex(dataset, path):
+    with open(path, 'w') as f:
+        f.write(dataset.head().to_latex(index=False))

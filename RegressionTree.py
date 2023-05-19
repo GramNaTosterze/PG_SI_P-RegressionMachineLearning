@@ -5,6 +5,7 @@ Created on Fri May  5 17:31:36 2023
 @author: Krzysiu
 """
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Node:
     def __init__(self, feature=None, threshold=None, left=None, right=None, var_red=None, value=None):
@@ -74,6 +75,28 @@ class RegressionTree:
                 node = node.right
             prediction = node.value
         return prediction
+    
+    def plot(self, X, y):
+        """Plot tree [WIP]"""
+        X_grid = []
+        min_len = np.inf
+        for i in range(X.shape[1]):
+            arr = np.arange(np.amin(X[i]), np.amax(X[i]), 0.01)
+            X_grid.append(arr)
+            min_len = min(min_len, len(arr))
+        for i in range(X.shape[1]):
+            X_grid[i] = X_grid[i][:min_len]
+        X_grid = np.array(X_grid)
+        
+        y_pred = []
+        for x in X:
+            y_pred.append(self.predict(x))
+        
+        for i in range(X.shape[1]):
+            plt.scatter(X[:,i], y[:min_len])
+        plt.plot(X_grid, y_pred)
+        
+        return y_pred;
     
     def __rss(self, y1, y2):
         """Residual Sum of Squares - used to measure quality of split"""
