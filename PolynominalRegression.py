@@ -1,32 +1,37 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Wed May 17 17:03:39 2023
-
-@author: krzysiu
-"""
 import numpy as np
+import matplotlib.pyplot as plt
 
 class PolynominalRegression:
+    name = "Regresja wielomianowa"
     def __init__(self, degree=2):
-        self.__omega  = None
-        self.__degree = degree # TODO
+        self.__theta  = None
+        self.__degree = degree+1 # TODO
     
-    def fit(self, x, y):
+    def fit(self, x, y, Gradient=False):
         """Train model"""
-        self.__standard(x, y)
+        if Gradient:
+            self.__GradientDescent(x, y)
+        else:
+            self.__standard(x, y)
         
     def __standard(self, x, y):
         """Train model with standard method"""
         x = np.array(x)
         y = np.matrix(y)
-        X = np.concatenate((np.ones(x.shape), x, x*x)).reshape(3, -1)
+        
+        # dodawanie dodatkowych rzędów
+        
+        X = np.concatenate((np.ones(x.shape), x))
+        for i in range(2,self.__degree):
+            X = np.concatenate((X, x**i))
+        X = X.reshape(self.__degree, -1)
+        # wz: Theta = (X^T * X)^-1 * X^T * y
+        
         X = np.matrix(X)
         X_T = X.T
-        x_dot_x = np.dot(X, X_T)
-        X_inv = np.linalg.inv(x_dot_x)
-        x_dot_y = np.dot(y, X_T)
-        self.__omega = np.dot(X_inv, x_dot_y.T)
+        self.__theta = (X * X_T)**-1 * (y * X_T).T
         
     def __GradientDescent(self, x, y):
         """Train model with Gradient Descent"""
@@ -35,17 +40,24 @@ class PolynominalRegression:
         
     def predict(self, sample):
         """Make prediction for provided sample"""
-        return self.__omega[0] + np.dot(self.__omega[1], sample) + np.dot(self.__omega[2], sample**2)
-        pass
-    def plot(self, test_data):
+        arr = [ self.__theta[i] * sample**i for i in range(self.__degree)]
+        return np.array(arr).sum(axis=0).reshape(-1)
+    
+    def plot(self, x, y):
         """plot a graph with test data"""
-        # TODO
-        pass
+        x_pred = np.arange(min(x), max(x), step=0.01)
+        y_pred = self.predict(x_pred)
+        plt.plot(x_pred, y_pred, color='b')
+        
+        plt.scatter(x, y, color='r')
+        plt.show()
     
     def print(self):
         """prints some info"""
-        print(f"f(x) = {self.__omega[0]}*x^2 + {self.__omega[1]}x + {self.__omega[2]}")
-    
+        print(f"f(x) = {self.__theta[0]}", end='')
+        for i in range(1, self.__degree):
+            print(f" + {self.__theta[i]}*x^{i}", end='')
+        print()
     def score(self, sample):
         """Score of trained model"""
         # TODO

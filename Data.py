@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri May  5 17:38:06 2023
-
-@author: Krzysiu
-"""
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -28,8 +23,8 @@ def inspect_data(dataset):
     print('Statistics:')
     print(dataset.describe().transpose())
 
-    sns.pairplot(dataset[['MPG', 'Cylinders', 'Displacement', 'Weight']], diag_kind='kde')
-    plt.show()
+    #sns.pairplot(dataset[['MPG', 'Cylinders', 'Displacement', 'Weight']], diag_kind='kde')
+    #plt.show()
 
 
 def split_data(dataset):
