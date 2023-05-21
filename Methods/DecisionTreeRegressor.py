@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
+from Regressor import Regressor
 
 class Node:
     
@@ -14,16 +13,16 @@ class Node:
         self.value      = value
         
         
-class RegressionTree:
-    name = "Regresja z użyciem drzewa"
+class DecisionTreeRegressor(Regressor):
+    name = "DecisionTreeRegression"
     def __init__(self, min_sample_split=2, max_depth=2):
         self.__root               = None
         self.__min_sample_split   = min_sample_split
         self.__max_depth          = max_depth
-        self.__features           = None
+        self._features            = None
     
     def fit(self, X, y):
-        self.__features = X.shape[1]
+        self._features = X.shape[1]
         self.__root = self.__split(X, y, 0)
     
     def __split(self, X, y, depth):
@@ -74,23 +73,6 @@ class RegressionTree:
             prediction = node.value
         return prediction
     
-    def plot(self, x, y):
-        """Plot tree"""
-        if self.__features == 1:
-            X_grid = np.arange(min(x), max(x), step=0.01)
-            plt.scatter(x, y, color='b')
-            y_pred = [self.predict([x]) for x in X_grid]
-            plt.plot(X_grid, y_pred, color='r')
-            plt.show()
-        else:
-            pca = PCA(n_components=2)
-            x_pca = pca.fit_transform(x, y)
-            x = x_pca[:, 0]
-            y = x_pca[:, 1]
-            self.fit(np.array(x).reshape(-1,1),y)
-            self.plot(x, y)
-        
-    
     def __rss(self, y1, y2):
         """Residual Sum of Squares - used to measure quality of split"""
         def srs(y):
@@ -112,10 +94,5 @@ class RegressionTree:
             self.print(tree.left, indent + indent)
             print(f"{indent}right:", end='')
             self.print(tree.right, indent + indent)
-            
-    def score(self, x, y):
-        """Score of trained model"""
-        y_pred = [self.predict(x) for x in x]
-        return ((y_pred - y)**2).mean()          
         
         

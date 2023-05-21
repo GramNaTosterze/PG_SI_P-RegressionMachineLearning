@@ -1,6 +1,3 @@
-/main.py
-/Data.py
-/Data/
-/__pycache__/
-/Tables
-/Plots
+/__pycache__
+/Tables/*
+/Plots/*

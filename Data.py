@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 import numpy as np
+import os
 
-def get_data(path):
+def get_data(path, to_drop=None):
     
-    raw_dataset = pd.read_csv(path, na_values='?', comment='\t',
+    raw_dataset = pd.read_csv(os.path.join('Data', path), na_values='?', comment='\t',
                               sep=',', skipinitialspace=True)
     
     dataset = raw_dataset.dropna()
+    if to_drop is not None:
+        dataset.drop(to_drop, axis=1, inplace=True)
     return dataset.select_dtypes([np.number])
 
 
