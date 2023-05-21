@@ -5,8 +5,13 @@ import Data
 import sys
 import matplotlib.pyplot as plt
 
-
+# prep
 sys.path.append('Methods')
+if not os.path.exists('Tables'):
+    os.mkdir('Tables')
+if not os.path.exists('Plots'):
+    os.mkdir('Plots')
+
 from DecisionTreeRegressor import DecisionTreeRegressor
 from PolynominalRegressor import PolynominalRegressor
 
