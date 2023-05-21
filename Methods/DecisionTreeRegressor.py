@@ -22,7 +22,10 @@ class DecisionTreeRegressor(Regressor):
         self._features            = None
     
     def fit(self, X, y):
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
         self._features = X.shape[1]
+        
         self.__root = self.__split(X, y, 0)
     
     def __split(self, X, y, depth):

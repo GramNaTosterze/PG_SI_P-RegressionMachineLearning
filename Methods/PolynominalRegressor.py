@@ -25,6 +25,8 @@ class PolynominalRegressor(Regressor):
         self.__featurePows = [[0]]
         x = np.array(x)
         y = np.matrix(y).T
+        if x.ndim == 1:
+            x = x.reshape(-1, 1)
         self._features = x.shape[1]
         # dodawanie dodatkowych rzędów
         
@@ -49,7 +51,7 @@ class PolynominalRegressor(Regressor):
         X_T = X.T
         P1 = X_T * X
         P2 = X_T * y
-        self.__theta = (P1)**-1 * P2
+        self.__theta = P1.I * P2
         
     def predict(self, sample):
         """Make prediction for provided sample"""
