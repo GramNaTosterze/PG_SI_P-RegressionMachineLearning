@@ -21,12 +21,13 @@ class DecisionTreeRegressor(Regressor):
         self.__max_depth          = max_depth
         self._features            = None
     
-    def fit(self, X, y):
-        if X.ndim == 1:
-            X = X.reshape(-1, 1)
-        self._features = X.shape[1]
+    def __rss(self, y1, y2):
+        """Residual Sum of Squares - used to measure quality of split"""
+        def srs(y):
+            """Squared resudual sum"""
+            return np.sum((y - np.mean(y))**2)
         
-        self.__root = self.__split(X, y, 0)
+        return srs(y1) + srs(y2)
     
     def __split(self, X, y, depth):
         if depth == self.__max_depth:
@@ -63,6 +64,13 @@ class DecisionTreeRegressor(Regressor):
         
         return Node(feature=best_feature, threshold=best_threshold)
     
+    def fit(self, X, y):
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+        self._features = X.shape[1]
+        
+        self.__root = self.__split(X, y, 0)
+    
     def predict(self, sample):
         """Make prediction based on current tree"""
         prediction = None
@@ -75,14 +83,6 @@ class DecisionTreeRegressor(Regressor):
                 node = node.right
             prediction = node.value
         return prediction
-    
-    def __rss(self, y1, y2):
-        """Residual Sum of Squares - used to measure quality of split"""
-        def srs(y):
-            """Squared resudual sum"""
-            return np.sum((y - np.mean(y))**2)
-        
-        return srs(y1) + srs(y2)
     
     def print(self, tree=None, indent=" "):
         """Prints the current tree"""

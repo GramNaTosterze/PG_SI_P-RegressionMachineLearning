@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 from abc import ABC, abstractmethod
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 from copy import deepcopy
 import numpy as np
 import matplotlib.pyplot as plt
-
 
 class Regressor(ABC):
     name      = 'Regression'
@@ -17,13 +17,13 @@ class Regressor(ABC):
         pass
         
     
-    def fit_transform(self, x, y):
-        """Train model and transfort to 2 featurer"""
-        pca = PCA(n_components=2)
-        train_data = pca.fit_transform(x, y)
-        x = train_data[:, 0]
-        y = train_data[:, 1]
-        self.fit(np.array(x).reshape(-1,1),y)
+    #def fit_transform(self, x, y):
+       #"""Train model and transfort to 2 featurer"""
+    #    pca = PCA(n_components=1)
+    #    x = pca.fit_transform(x)
+        #x = train_data[:, 0]
+        #y = train_data[:, 1]
+    #    self.fit(np.array(x).reshape(-1,1),y)
     
     @abstractmethod
     def predict(self, sample):
@@ -54,16 +54,25 @@ class Regressor(ABC):
             plt.plot(x_pred, y_pred, color='green')
             plt.legend()
         else:
-            pca = PCA(n_components=2)
-            test_data  = pca.fit_transform(x, y)
-            x = test_data[:, 0]
-            y = test_data[:, 1]
+            pca = PCA(n_components=1)            
+            x_std = StandardScaler().fit_transform(x)
+            x  = pca.fit_transform(x_std)
+            #x = test_data[:, 0]
+            #y = test_data[:, 1]
             if x_train is not None and y_train is not None:
-                train_data = pca.fit_transform(x_train, y_train)
-                x_train = train_data[:, 0]
-                y_train = train_data[:, 1]
+                x_train_std = StandardScaler().fit_transform(x_train)
+                x_train = pca.fit_transform(x_train_std)
+                #x_train = train_data[:, 0]
+                #y_train = train_data[:, 1]
+                plt.scatter(x_train, y_train, color='r', label='train_data')
             
-            self.plot(x,y, transformed=True, x_train=x_train, y_train=y_train)
+            self.fit(x_train, y_train)
+            x_pred = np.arange(min(x), max(x), step=0.1)
+            y_pred = [self.predict( [x for i in range(self._features)] ) for x in x_pred]
+            plt.scatter(x, y, color='b', label='test_data')
+            plt.plot(x_pred, y_pred, color='green')
+            plt.legend()
+            #self.plot(x,y, transformed=True, x_train=x_train, y_train=y_train)
     
     def score(self, x, y):
         """Score of trained model using coefficient of determination"""

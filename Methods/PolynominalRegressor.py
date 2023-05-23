@@ -10,7 +10,6 @@ class PolynominalRegressor(Regressor):
         self.__theta  = None
         self.__degree = degree
         
-    
     def fit(self, x, y):
         """Train model"""
         def add_col(a1, a2):

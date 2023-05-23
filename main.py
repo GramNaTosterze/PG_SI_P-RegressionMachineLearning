@@ -17,35 +17,12 @@ if not os.path.exists('Plots'):
 from DecisionTreeRegressor import DecisionTreeRegressor
 from PolynominalRegressor import PolynominalRegressor
 from LinearRegressor import LinearRegressor
+from NeuralNetworkRegressor import NeuralNetworkRegressor
 
 datasets = [
-    {'file_name': 'Student_Marks', 'y_label': 'Marks', 'x_labels': ['time_study']},
-    {'file_name': 'CarPrice_Assignment', 'y_label': 'price',  'x_labels': ['horsepower', 'carlength', 'carwidth', 'peakrpm']}
+    {'file_name': 'Student_Marks', 'y_label': 'Marks', 'title': 'Oceny otrzymane przez uczniów na bazie ilości kursów oraz godziń nauki', 'x_plt_label': 'czas nauki, ilość przedmiotów', 'y_plt_label': 'ocena'},
+    #{'file_name': 'CarPrice_Assignment', 'y_label': 'price', 'title': 'Ceny samochodów na bazie różnych cech', 'x_plt_label': 'różne cechy samochodu', 'y_plt_label': 'cena samochodu'}
     ]
-def find_best_feature_combination(dataset, y_label, features, regressor):
-    featureList = [list(itt.combinations(features, r=i)) for i in range(1,len(features)+1)]
-    featureCombinations = list(itt.chain.from_iterable(featureList))
-    
-    y_train = dataset[y_label].to_numpy()
-    
-    best_model = None
-    best_score = -np.inf
-    best_featureSet = None
-    
-    for featureSet in featureCombinations:
-        featureSet = list(featureSet)
-        x_train = dataset.loc[:, featureSet].to_numpy()
-        regressor.fit(x_train, y_train)
-        score = regressor.score(x_train, y_train)
-        if score > best_score:
-            best_score = score
-            best_model = regressor.model()
-            best_featureSet = featureSet
-    
-    print(f"score_train: {best_score} - {best_featureSet}")
-    regressor = best_model
-    return best_featureSet
-
 
 for dataset in datasets:
     data = Data.get_data(f"{dataset['file_name']}.csv")
@@ -55,32 +32,30 @@ for dataset in datasets:
     train_data, test_data = Data.split_data(data)
 
     y_train = train_data[dataset['y_label']].to_numpy()
-    #x_train = train_data.loc[:, dataset['x_labels']].to_numpy()
+    x_train = train_data.loc[:, data.columns != dataset['y_label']].to_numpy()
     
     y_test = test_data[dataset['y_label']].to_numpy()
-    #x_test = test_data.loc[:, dataset['x_labels']].to_numpy()
+    x_test = test_data.loc[:, data.columns != dataset['y_label']].to_numpy()
     
     
     
-    regressors = [LinearRegressor(), PolynominalRegressor(degree=3), DecisionTreeRegressor(min_sample_split=3, max_depth=4)]
+    regressors = [LinearRegressor(), PolynominalRegressor(degree=3), DecisionTreeRegressor(min_sample_split=3, max_depth=4), NeuralNetworkRegressor()]
     for regressor in regressors:
         print(f"name: {regressor.name}")
-        featureSet = find_best_feature_combination(train_data, dataset['y_label'], dataset['x_labels'], regressor)
-        x_train = train_data.loc[:, featureSet].to_numpy()
         time_0 = time.time() 
         regressor.fit(x_train, y_train)
         time_1 = time.time() - time_0
         
         # test data
-        x_test = test_data.loc[:, featureSet].to_numpy()
         print(f"score_test : {regressor.score(x_test, y_test)}")
         print(f"time: {time_1}")
         
         regressor.print()
         print()
         
-        if x_test.shape[1] != 1:
-            regressor.fit_transform(x_train, y_train)
+        plt.title(dataset['title'])
+        plt.xlabel(dataset['x_plt_label'])
+        plt.ylabel(dataset['y_plt_label'])
         regressor.plot(x_test, y_test, x_train=x_train, y_train=y_train)
         plt.savefig(os.path.join('Plots',f"{dataset['file_name']}_{regressor.name}.png"))
         plt.show()
