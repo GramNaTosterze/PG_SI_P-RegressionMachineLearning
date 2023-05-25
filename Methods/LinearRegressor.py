@@ -14,7 +14,7 @@ class LinearRegressor(Regressor):
         y = np.matrix(y).T
         X = np.column_stack((np.ones((len(X),1)), X))
         X = np.matrix(X)
-        self.__theta = ((X.T * X).I) * X.T * y
+        self.__theta = np.array( ((X.T * X).I) * X.T * y )
 
     def fit(self, x, y):
         """Train model"""
@@ -25,8 +25,9 @@ class LinearRegressor(Regressor):
 
     def predict(self, sample):
         """Make prediction for provided sample"""
-        return self.__theta[0,0] + sum([self.__theta[i+1,0]*sample[i] for i in range(len(sample))])
-
+        #return self.__theta[0,0] + sum([self.__theta[i+1,0]*sample[i] for i in range(len(sample))])
+        theta = self.__theta
+        return self.__theta[0,0] + np.sum(self.__theta[1:, 0] * sample.reshape(-1,1) )
     
     def print(self):
         """prints some info"""

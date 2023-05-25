@@ -45,8 +45,8 @@ class Regressor(ABC):
     def plot(self, x, y, transformed=False, x_train=None, y_train=None):
         """plot a graph with test data"""
         if transformed or x.ndim == 1 or x.shape[1] == 1:
-            x_pred = np.arange(min(x), max(x), step=0.01)
-            y_pred = [self.predict( [x for i in range(self._features)] ) for x in x_pred]
+            x_pred = np.linspace(min(x), max(x), 100)
+            y_pred = [self.predict(x) for x in x_pred]
             plt.grid()
             if x_train is not None and y_train is not None:
                 plt.scatter(x_train, y_train, color='r', label='train_data')
@@ -57,22 +57,17 @@ class Regressor(ABC):
             pca = PCA(n_components=1)            
             x_std = StandardScaler().fit_transform(x)
             x  = pca.fit_transform(x_std)
-            #x = test_data[:, 0]
-            #y = test_data[:, 1]
             if x_train is not None and y_train is not None:
                 x_train_std = StandardScaler().fit_transform(x_train)
                 x_train = pca.fit_transform(x_train_std)
-                #x_train = train_data[:, 0]
-                #y_train = train_data[:, 1]
                 plt.scatter(x_train, y_train, color='r', label='train_data')
             
             self.fit(x_train, y_train)
-            x_pred = np.arange(min(x), max(x), step=0.1)
-            y_pred = [self.predict( [x for i in range(self._features)] ) for x in x_pred]
+            x_pred = np.linspace(min(x), max(x), 100)
+            y_pred = [self.predict(x) for x in x_pred]
             plt.scatter(x, y, color='b', label='test_data')
             plt.plot(x_pred, y_pred, color='green')
             plt.legend()
-            #self.plot(x,y, transformed=True, x_train=x_train, y_train=y_train)
     
     def score(self, x, y):
         """Score of trained model using coefficient of determination"""

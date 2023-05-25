@@ -4,8 +4,6 @@ import time
 import Data
 import sys
 import matplotlib.pyplot as plt
-import numpy as np
-import itertools as itt
 
 # prep
 sys.path.append('Methods')
@@ -39,7 +37,8 @@ for dataset in datasets:
     
     
     
-    regressors = [LinearRegressor(), PolynominalRegressor(degree=3), DecisionTreeRegressor(min_sample_split=3, max_depth=4), NeuralNetworkRegressor()]
+    regressors = [LinearRegressor(), PolynominalRegressor(degree=3), DecisionTreeRegressor(min_sample_split=3, max_depth=4)]
+    #regressors = [NeuralNetworkRegressor()]
     for regressor in regressors:
         print(f"name: {regressor.name}")
         time_0 = time.time() 
