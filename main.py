@@ -19,14 +19,16 @@ from NeuralNetworkRegressor import NeuralNetworkRegressor
 
 datasets = [
     {'file_name': 'Student_Marks', 'y_label': 'Marks', 'title': 'Oceny otrzymane przez uczniów na bazie ilości kursów oraz godziń nauki', 'x_plt_label': 'czas nauki, ilość przedmiotów', 'y_plt_label': 'ocena'},
-    #{'file_name': 'CarPrice_Assignment', 'y_label': 'price', 'title': 'Ceny samochodów na bazie różnych cech', 'x_plt_label': 'różne cechy samochodu', 'y_plt_label': 'cena samochodu'}
+    {'file_name': 'CarPrice_Assignment', 'y_label': 'price', 'title': 'Ceny samochodów na bazie różnych cech', 'x_plt_label': 'różne cechy samochodu', 'y_plt_label': 'cena samochodu'}
     ]
 
 for dataset in datasets:
     data = Data.get_data(f"{dataset['file_name']}.csv")
     #Data.inspect_data(data)
-    Data.save_to_latex(data, os.path.join('Tables',f"{dataset['file_name']}.tex"))
-
+    
+    #Data.save_to_latex(data, os.path.join('Tables',f"{dataset['file_name']}.tex"))
+    #with open:
+    #    f.write(dataset.head().to_latex(index=False))
     train_data, test_data = Data.split_data(data)
 
     y_train = train_data[dataset['y_label']].to_numpy()
@@ -38,19 +40,20 @@ for dataset in datasets:
     
     
     regressors = [LinearRegressor(), PolynominalRegressor(degree=3), DecisionTreeRegressor(min_sample_split=3, max_depth=4)]
-    #regressors = [NeuralNetworkRegressor()]
+    #regressors = [NeuralNetworkRegressor(iterations=10000, learning_rate=0.1)]
     for regressor in regressors:
+        print()
         print(f"name: {regressor.name}")
         time_0 = time.time() 
         regressor.fit(x_train, y_train)
         time_1 = time.time() - time_0
         
         # test data
+        print(f"time: {round(time_1,5)}")
+        #regressor.print()
+        print(f"score_train: {regressor.score(x_train, y_train)}")
         print(f"score_test : {regressor.score(x_test, y_test)}")
-        print(f"time: {time_1}")
         
-        regressor.print()
-        print()
         
         plt.title(dataset['title'])
         plt.xlabel(dataset['x_plt_label'])

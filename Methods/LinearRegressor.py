@@ -25,10 +25,8 @@ class LinearRegressor(Regressor):
 
     def predict(self, sample):
         """Make prediction for provided sample"""
-        #return self.__theta[0,0] + sum([self.__theta[i+1,0]*sample[i] for i in range(len(sample))])
-        theta = self.__theta
-        return self.__theta[0,0] + np.sum(self.__theta[1:, 0] * sample.reshape(-1,1) )
-    
+        return self.__theta[0,0] + sum([self.__theta[i+1,0]*sample[i] for i in range(len(sample))])
+        
     def print(self):
         """prints some info"""
         features = ''.join('x' if self._features == 1 else [f"x{i}{''if i == self._features - 1 else ', '}" for i in range(self._features)])

@@ -29,7 +29,7 @@ def inspect_data(dataset):
 
 
 def split_data(dataset):
-    train_dataset = dataset.sample(frac=0.8, random_state=0)
+    train_dataset = dataset.sample(frac=0.8, random_state=191689)
     test_dataset = dataset.drop(train_dataset.index)
 
     return train_dataset, test_dataset

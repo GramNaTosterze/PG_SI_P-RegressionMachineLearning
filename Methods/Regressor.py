@@ -7,6 +7,8 @@ from copy import deepcopy
 import numpy as np
 import matplotlib.pyplot as plt
 
+from sklearn.metrics import r2_score
+
 class Regressor(ABC):
     name      = 'Regression'
     _features = None
@@ -15,15 +17,6 @@ class Regressor(ABC):
     def fit(self, x, y):
         """Train model"""
         pass
-        
-    
-    #def fit_transform(self, x, y):
-       #"""Train model and transfort to 2 featurer"""
-    #    pca = PCA(n_components=1)
-    #    x = pca.fit_transform(x)
-        #x = train_data[:, 0]
-        #y = train_data[:, 1]
-    #    self.fit(np.array(x).reshape(-1,1),y)
     
     @abstractmethod
     def predict(self, sample):
@@ -37,10 +30,6 @@ class Regressor(ABC):
     
     def model(self):
         return deepcopy(self)
-
-    def best_featureset(self, features): # move from main
-        """Returns a featureset with best score"""
-        pass
 
     def plot(self, x, y, transformed=False, x_train=None, y_train=None):
         """plot a graph with test data"""
@@ -68,6 +57,7 @@ class Regressor(ABC):
             plt.scatter(x, y, color='b', label='test_data')
             plt.plot(x_pred, y_pred, color='green')
             plt.legend()
+            print(f'PCA_score: {self.score(x, y)}')
     
     def score(self, x, y):
         """Score of trained model using coefficient of determination"""
@@ -80,5 +70,5 @@ class Regressor(ABC):
         SS_res = np.sum((y - y_pred)**2)
         SS_tot = np.sum((y - y_mean)**2)
         
-        return round(1 - (SS_res/SS_tot if SS_res/SS_tot < 1 else 1), 2)
+        return round(1 - SS_res/SS_tot, 2)
         
