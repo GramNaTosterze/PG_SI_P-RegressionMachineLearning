@@ -1,91 +1,58 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import numpy as np
-import torch
-from torch import nn
+
+# Neural Net modules
+from keras.models   import Sequential
+from keras.layers    import Dense, Dropout
+from keras.callbacks import EarlyStopping
+
+# regressor class
 from Regressor import Regressor
-from torch.utils.data import Dataset, DataLoader    
 
-class Dataclass(Dataset):
-    def __init__(self, X, y):
-        if not torch.is_tensor(X) and not torch.is_tensor(y):
-            self.X = torch.from_numpy(X)
-            self.y = torch.from_numpy(y)
-        
-    def __len__(self):
-        return len(self.X)
-
-    def __getitem__(self, i):
-        return self.X[i], self.y[i]
-
-class MLP(nn.Module):
-    def __init__(self, in_features):
-        super().__init__()
-        self.layers = nn.Sequential(
-            nn.Linear(in_features, 64),
-            nn.ReLU(),
-            nn.Linear(64, 32),
-            nn.ReLU(),
-            nn.Linear(32, 1))
-        
-    def forward(self, x):
-        return self.layers(x)
 
 
 class NeuralNetworkRegressor(Regressor):
     name = 'NeuralNetworkRegression'
-    def __init__(self, iterations, learning_rate):
-        self.__learning_rate = learning_rate
-        self.__epochs = 5
+    def __init__(self, epochs=5000, batch_size=50, print_additional_info=False):
+        self.__epochs                = epochs
+        self.__batch_size            = batch_size
+        self.__verbose               = 1 if print_additional_info else 0
+        self.__print_additional_info = print_additional_info
+        self.__model                 = None
+        self.__history               = None
     
     def fit(self, x, y):
         """Train model"""
-        # prep
-        dataset = Dataclass(x, y)
-        trainloader = torch.utils.data.DataLoader(dataset, batch_size=10, shuffle=True, num_workers=1)
-        mlp = MLP(x.shape[1])
-        loss_function = nn.L1Loss()
-        optimizer = torch.optim.Adam(mlp.parameters(), lr=self.__learning_rate)
+        self.__model = Sequential()
+        self.__model.add(Dense(1000, input_shape=(x.shape[1], ), activation='relu'))
+        self.__model.add(Dense(500, activation='relu'))
+        self.__model.add(Dense(250, activation='relu'))
+        self.__model.add(Dense(1, activation='linear'))
+
+        if self.__print_additional_info:
+            self.__model.sumary()
+
+        self.__model.compile(optimizer='rmsprop', loss='mse', metrics=['mae'])
         
-        # train
-        for epoch in range(0, self.__epochs):
-            print(f'Starting epoch {epoch+1}')
-            
-            current_loss = 0.0
-            
-            for i, data in enumerate(trainloader, 0):
-                inputs, targets = data
-                inputs, targets = inputs.float(), targets.float()
-                targets = targets.reshape((targets.shape[0], 1))
-      
-                # Zero the gradients
-                optimizer.zero_grad()
-      
-                # Perform forward pass
-                outputs = mlp(inputs)
-      
-                # Compute loss
-                loss = loss_function(outputs, targets)
-      
-                # Perform backward pass
-                loss.backward()
-      
-                # Perform optimization
-                optimizer.step()
-      
-                # Print statistics
-                current_loss += loss.item()
-                if i % 10 == 0:
-                    print('Loss after mini-batch %5d: %.3f' %
-                    (i + 1, current_loss / 500))
-                    current_loss = 0.0
-        print("end")
+        es = EarlyStopping(monitor='val_loss',
+                   mode='min',
+                   patience=50,
+                   restore_best_weights = True)
+        
+        self.__history = self.__model.fit(x, y, 
+                                   validation_data = (x,y),
+                                   callbacks = [es],
+                                   epochs = self.__epochs,
+                                   batch_size = self.__batch_size,
+                                   verbose = self.__verbose)
         
         
     def predict(self, sample):
         """Make prediction for provided sample"""
-        return 
-    
+        model = self.__model
+        return self.__model(sample.reshape(1,-1))[0,0]
+
     def print(self):
         """prints some info"""
         print()

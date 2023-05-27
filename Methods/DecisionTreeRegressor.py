@@ -15,7 +15,7 @@ class Node:
         
 class DecisionTreeRegressor(Regressor):
     name = "DecisionTreeRegression"
-    def __init__(self, min_sample_split=2, max_depth=2):
+    def __init__(self, min_sample_split=2, max_depth=2, print_additional_info=False):
         self.__root               = None
         self.__min_sample_split   = min_sample_split
         self.__max_depth          = max_depth

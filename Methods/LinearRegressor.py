@@ -5,7 +5,7 @@ from Regressor import Regressor
 
 class LinearRegressor(Regressor):
     name = 'LinearRegression'
-    def __init__(self):
+    def __init__(self, print_additional_info=False):
         self.__theta = None
         self._features = None
 

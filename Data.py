@@ -5,11 +5,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import os
 
-def get_data(path):
+def get_data(path, index=None):
     
     raw_dataset = pd.read_csv(os.path.join('Data', path), na_values='?', comment='\t',
                               sep=',', skipinitialspace=True)
     
+    if index is not None:
+        raw_dataset.drop(index, axis=1, inplace=True)
     dataset = raw_dataset.dropna()
     return dataset.select_dtypes([np.number])
 
@@ -36,4 +38,4 @@ def split_data(dataset):
 
 def save_to_latex(dataset, path):
     with open(path, 'w') as f:
-        f.write(dataset.head().to_latex(index=False))
+        f.write(dataset.head().style.to_latex())

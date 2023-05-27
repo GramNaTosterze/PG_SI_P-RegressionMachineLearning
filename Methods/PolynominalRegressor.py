@@ -6,7 +6,7 @@ from Regressor import Regressor
 
 class PolynominalRegressor(Regressor):
     name = 'PolynominalRegression'
-    def __init__(self, degree=2):
+    def __init__(self, degree=2, print_additional_info=False):
         self.__theta  = None
         self.__degree = degree
         

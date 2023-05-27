@@ -6,6 +6,7 @@ from sklearn.preprocessing import StandardScaler
 from copy import deepcopy
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 from sklearn.metrics import r2_score
 
@@ -57,7 +58,8 @@ class Regressor(ABC):
             plt.scatter(x, y, color='b', label='test_data')
             plt.plot(x_pred, y_pred, color='green')
             plt.legend()
-            print(f'PCA_score: {self.score(x, y)}')
+            
+            return self.score(x, y)
     
     def score(self, x, y):
         """Score of trained model using coefficient of determination"""
@@ -70,5 +72,5 @@ class Regressor(ABC):
         SS_res = np.sum((y - y_pred)**2)
         SS_tot = np.sum((y - y_mean)**2)
         
-        return round(1 - SS_res/SS_tot, 2)
+        return math.floor((1 - SS_res/SS_tot)*100) / 100
         
