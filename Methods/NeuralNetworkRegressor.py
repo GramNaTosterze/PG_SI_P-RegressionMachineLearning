@@ -26,8 +26,11 @@ class NeuralNetworkRegressor(Regressor):
         """Train model"""
         self.__model = Sequential()
         self.__model.add(Dense(1000, input_shape=(x.shape[1], ), activation='relu'))
+        self.__model.add(Dropout(0.5))
         self.__model.add(Dense(500, activation='relu'))
+        self.__model.add(Dropout(0.5))
         self.__model.add(Dense(250, activation='relu'))
+        self.__model.add(Dropout(0.5))
         self.__model.add(Dense(1, activation='linear'))
 
         if self.__print_additional_info:

@@ -8,8 +8,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-from sklearn.metrics import r2_score
-
 class Regressor(ABC):
     name      = 'Regression'
     _features = None
